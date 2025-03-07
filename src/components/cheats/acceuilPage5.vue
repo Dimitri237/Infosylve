@@ -253,7 +253,7 @@
 
 <script>
 import actePage from '../actePage.vue';
-import realisationsPage from '../realisationsPage.vue';
+import realisationsPage from '../userListe.vue';
 import processusPage from '../processusPage.vue';
 import offrePage from '../offrePage.vue';
 import personnelPage from '../personnel_page.vue';

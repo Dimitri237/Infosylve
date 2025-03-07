@@ -4,49 +4,42 @@
       <img src="" alt="" />
     </nav>
     <div>
-      <h2 class="monda-font">Inscription</h2>
+      <h2 class="monda-font">Ajouter un Utilisateur</h2>
     </div>
     <form @submit.prevent="createAccount">
       <div class="input-field">
-        <div> <label for="name">Nom & Prenom</label></div>
-        <input class="input" type="text" id="username" v-model="username" required>
+        <div><label for="name">Nom</label></div>
+        <input class="input" type="text" id="name" v-model="name" required />
       </div>
       <div class="input-field">
-        <div> <label for="name">Date de naissance</label></div>
-        <input class="input" type="date" id="date_naissance" v-model="date_naissance" required>
+        <div><label for="name">Prenom</label></div>
+        <input class="input" type="text" id="surname" v-model="surname" required />
       </div>
       <div class="input-field">
-        <div> <label for="name">Sexe</label></div>
-        <select id="sexe" v-model="sexe" required>
+        <div><label for="name">Sexe</label></div>
+        <select id="gender" v-model="gender" required>
           <option value="Masculin">Masculin</option>
           <option value="Feminin">Feminin</option>
         </select>
       </div>
       <div class="input-field">
-        <div> <label for="contact">Telephone</label></div>
-        <input class="input" type="" id="contact" v-model="contact" required>
+        <div><label for="email">Email</label></div>
+        <input class="input" type="" id="email" v-model="email" required />
       </div>
       <div class="input-field">
-        <div> <label for="email">Email</label></div>
-        <input class="input" type="" id="email" v-model="email" required>
+        <div><label for="birthDate">Date de naissance</label></div>
+        <input class="input" type="date" id="birthDate" v-model="birthDate" required />
       </div>
-      <div class="input-field">
-        <div> <label for="localisation">Localisation</label></div>
-        <input class="input" type="" id="localisation" v-model="localisation" required>
-      </div>
-      <div class="input-field">
-        <div> <label for="name">Type d'utilisateur</label></div>
-        <select id="type_u" v-model="type_u" required>
-          <option value="basicUser">basicUser</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
-      <div class="input-field">
-        <div><label for="password">Mot de passe:</label></div>
-        <div>
-          <input class="input" type="password" id="password" v-model="password" required>
 
-        </div>
+      <div class="input-field">
+        <div><label for="mobilePhone">Telephone</label></div>
+        <input class="input" type="" id="mobilePhone" v-model="mobilePhone" required />
+      </div>
+      <div class="input-field">
+        <div><label for="roles">Type d'utilisateur</label></div>
+        <select id="roles" v-model="roles" required>
+          <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+        </select>
       </div>
       <button class="btn" type="submit">
         <span>Inscription</span>
@@ -57,49 +50,62 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
-      username: '',
-      date_naissance: '',
-      contact: '',
-      email: '',
-      sexe: '',
-      type_u: '',
-      create_by: '',
-      localisation: '',
-      password: '',
-      successMessage: '',
-      errorMessage: ''
+      name: "",
+      surname: "",
+      gender: "",
+      email: "",
+      birthDate: "",
+      mobilePhone: "",
+      roles: [],
+      successMessage: "",
+      errorMessage: "",
     };
   },
   methods: {
     async createAccount() {
       try {
-        const response = await axios.post('https://minsante-api-636b67309a26.herokuapp.com/signup', {
-          username: this.username,
-          date_naissance: this.date_naissance,
-          contact: this.contact,
-          sexe: this.sexe,
-          create_by: this.create_by,
-          email: this.email,
-          localisation: this.localisation,
-          type_u: this.type_u,
-          password: this.password,
-        });
-        this.successMessage = 'Inscription réussie !';
-        console.log(response.data.message);
-        console.log('ok');
+        const token = localStorage.getItem("jwt");
+        if (this.birthDate) {
+          const timestamp = new Date(this.birthDate).getTime();
+          console.log("Timestamp:", timestamp);
 
+          // Si roles est une chaîne de caractères, convertissez-la en tableau
+          const rolesArray = Array.isArray(this.roles) ? this.roles : [this.roles];
+
+           axios.post(
+            "http://localhost:8081/utilisateurs/save",
+            {
+              name: this.name,
+              surname: this.surname,
+              gender: this.gender,
+              email: this.email,
+              birthDate: timestamp,
+              mobilePhone: this.mobilePhone,
+              roles: rolesArray, // Utilisez le tableau ici
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          console.log("Inscription réussie !");
+          this.$router.push('/acceuilPage');
+        } else {
+          this.errorMessage = "Veuillez sélectionner une date.";
+          console.error(this.errorMessage);
+        }
       } catch (error) {
-        this.errorMessage = 'Échec de l\'inscription : ' + error.response.data.message;
-        console.log('off');
-
+        this.errorMessage = "Erreur lors de la création du compte. Veuillez réessayer.";
+        console.error("Erreur lors de la création du compte:", error);
       }
     },
-  }
+  },
 };
 </script>
 
@@ -107,7 +113,7 @@ export default {
 h2 {
   font-size: 25px;
   font-weight: bold;
-  color: #007A5E;
+  color: #025e1f;
 }
 
 .stext {
@@ -117,12 +123,15 @@ h2 {
 }
 
 .container {
+  background-color: white !important;
+  border-radius: 10px;
   text-align: left;
-  width: 450px;
+  width: 40% !important;
+  height: 90vh !important;
   margin: auto;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2) !important;
-  padding: 15px;
-  margin-top: 120px;
+  padding: 0 15px;
+  margin-top: 35px !important;
 }
 
 form {
@@ -131,18 +140,17 @@ form {
 }
 
 .monda-font {
-  font-family: 'Monda', sans-serif;
+  font-family: "Monda", sans-serif;
 }
 
 input {
   width: 98%;
-  height: 30px;
-  border: none;
+  height: 35px;
   background: transparent;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border: none;
+  border-bottom: 2px solid #025e1f;
   outline: none;
   margin-top: 5px;
-
 }
 
 input:nth-child(2) {
@@ -152,7 +160,7 @@ input:nth-child(2) {
 label {
   font-weight: 700;
   font-size: 16px;
-  color: rgba(6, 40, 61, 0.555)
+  color: rgba(6, 40, 61, 0.555);
 }
 
 .mot {
@@ -162,16 +170,24 @@ label {
 }
 
 .btn {
-  margin-top: 20px;
   font-size: 17px;
-  background: #007A5E;
+  background: #025e1f;
   border: none;
-  width: 100%;
+  width: 50%;
   border-radius: 10px;
-  height: 35px;
+  height: 40px;
   color: white;
+  transition: all 0.3s;
+  cursor: pointer;
+  outline: none;
+  font-weight: 700;
+  margin-left: 50%;
+  margin-top: 20px;
 }
-
+.btn:hover {
+  background: white;
+  color: #025e1f;
+}
 .pas {
   font-weight: 700;
   color: rgba(6, 40, 61, 1);
@@ -189,9 +205,9 @@ label {
   width: 23px;
   height: 23px;
   border-radius: 50%;
-  border: 3px solid white;
-  border-top-color: #007A5E;
-  border-bottom-color: #007A5E;
+  border: 3px solid #06283d;
+  border-top-color: white;
+  border-bottom-color: white;
   animation: spin 1s linear infinite;
 }
 

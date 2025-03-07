@@ -8,8 +8,8 @@
     </div>
     <form @submit.prevent="login">
       <div class="input-field">
-        <div><label for="email">Téléphone/Email</label></div>
-        <input id="contact" v-model="email" required>
+        <div><label for="email">Username</label></div>
+        <input id="contact" v-model="username" required>
       </div>
       <div class="input-field">
         <div><label for="password">Mot de passe</label></div>
@@ -30,7 +30,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      email: '',
+      username: '',
       password: '',
       loading: false,
     };
@@ -40,19 +40,21 @@ export default {
     async login() {
       this.loading = true;
       try {
-        const response = await axios.post('https://minsante-api-636b67309a26.herokuapp.com/login', {
-          email: this.email,
+        const response = await axios.post('http://localhost:8081/auth/authenticate', {
+          username: this.username,
           password: this.password,
         });
 
-        const { token, userId, userName } = response.data;
+        const { jwt, username } = response.data;
 
         // Stocker l'ID de l'utilisateur dans le localStorage
-        localStorage.setItem('userId', userId);
-        localStorage.setItem('userName', userName);
-
+        localStorage.setItem('username', username);
+        localStorage.setItem('jwt', jwt);
+        console.log(jwt);
+        console.log(username);
+        
         // Stocker le jeton d'authentification dans une variable ou le localStorage
-        this.token = token;
+        this.jwt = jwt;
 
         // Rediriger l'utilisateur vers une page protégée ou effectuer d'autres actions
         this.$router.push('/acceuilPage');
@@ -105,8 +107,8 @@ input {
   width: 98%;
   height: 35px;
   background: transparent;
-  border-radius: 10px;
-  border: 2px solid #025e1f;
+  border: none;
+  border-bottom: 2px solid #025e1f;
   outline: none;
   margin-top: 5px;
 

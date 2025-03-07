@@ -1,22 +1,11 @@
 <template>
-    <main>
-        <div class="sideBar">
-            <h1 class="logo"><span style="color: orange; font-size: 45px;">Dimi-</span>DK</h1>
-            <div class="profile">
-                <img src="" alt="">
-                <p>T.Dimitri</p>
-            </div>
-        </div>
-        <div class="container">
-            <section class="s1">
-                <div class="d1"></div>
-                <div class="d2"></div>
-            </section>
-            <section class="s2">
-                <div class="dive"></div>
-            </section>
-        </div>
-    </main>
+<div>
+    <ul>
+        <li><router-link to="/userListe">Liste des utilisateurs</router-link></li>
+        <li><router-link to="/optionList">Ajouter un itilisateur</router-link></li>
+        <li><router-link to="/acceuil">parametres</router-link></li>
+    </ul>
+</div>
 </template>
 
 <script>
